@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
-// use App\Models\Teacher;
+use App\Http\Controllers\AdminController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -23,13 +24,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::prefix('v1')->group( function(){
-    Route::post('/login',[AuthController::class, 'login'])->name('login');
-    Route::post('/email/verify',[AuthController::class, 'emailVerify'])->name('emailVerify');
-    Route::prefix('student')->group( function(){
-        Route::post('/register',[AuthController::class, 'studentRegister'])->name('studentRegister');
+Route::prefix('v1')->group(function () {
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
+    Route::post('/email/verify', [AuthController::class, 'emailVerify'])->name('emailVerify');
+    Route::prefix('student')->group(function () {
+        Route::post('/register', [AuthController::class, 'studentRegister'])->name('studentRegister');
 
-        Route::middleware(['auth:sanctum', 'abilities:student'])->group( function () {
+        Route::middleware(['auth:sanctum', 'abilities:student'])->group(function () {
             Route::get('get-profile', [StudentController::class, 'getProfile']);
             Route::get('courses', [StudentController::class, 'getCourses']);
             Route::get('my-courses', [StudentController::class, 'myCourses']);
@@ -37,13 +38,13 @@ Route::prefix('v1')->group( function(){
             Route::get('course/{id}', [StudentController::class, 'getCourse']);
             Route::post('join-course', [StudentController::class, 'joinCourse']);
             Route::get('get-schedules', [StudentController::class, 'getSchedules']);
-            Route::get('upcoming-schedules', [StudentController::class,'upcomingSchedules']);
+            Route::get('upcoming-schedules', [StudentController::class, 'upcomingSchedules']);
         });
     });
 
-    Route::prefix('teacher')->group( function(){
-        Route::post('/register',[AuthController::class, 'teacherRegister'])->name('teacherRegister');
-        Route::middleware(['auth:sanctum', 'abilities:teacher'])->group( function () {
+    Route::prefix('teacher')->group(function () {
+        Route::post('/register', [AuthController::class, 'teacherRegister'])->name('teacherRegister');
+        Route::middleware(['auth:sanctum', 'abilities:teacher'])->group(function () {
             Route::get('get-profile', [TeacherController::class, 'getProfile']);
             Route::post('create-course', [TeacherController::class, 'createCourse']);
             Route::get('course/{id}', [TeacherController::class, 'getCourse']);
@@ -64,7 +65,22 @@ Route::prefix('v1')->group( function(){
         });
     });
 
-    Route::middleware(['auth:sanctum'])->group( function () {
-        Route::post('update-profile', [UserController::class,'updateProfile']);
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::post('update-profile', [UserController::class, 'updateProfile']);
+        Route::get('activities',  [UserController::class, 'activities']);
+    });
+
+    Route::prefix('/admin')->group(function () {
+        Route::post('/login', [AuthController::class, 'adminLogin']);
+
+        Route::middleware(['auth:sanctum'])->group(function () {
+            Route::get('kpi', [AdminController::class, 'kpi']);
+            Route::get('students', [AdminController::class, 'students']);
+            Route::get('teachers', [AdminController::class, 'teachers']);
+            Route::get('chats', [AdminController::class, 'chats']);
+            Route::post('save-chat', [AdminController::class, 'saveChat']);
+            Route::post('message-students', [AdminController::class, 'sendMessageToAllStudents']);
+            Route::post('message-teachers', [AdminController::class, 'sendMessageToAllTeachers']);
+        });
     });
 });

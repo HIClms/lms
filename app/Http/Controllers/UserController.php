@@ -2,25 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function updateProfile(Request $request){
+    public function updateProfile(Request $request)
+    {
         $this->validate($request, [
-            'firstname'=>'required|string',
-            'lastname'=> 'required|string',
-            'country'=>'required',
-            'state'=>'required',
-            'address'=>'nullable|string',
-            'city'=>'nullable',
-            'bio'=>'nullable'
+            'firstname' => 'required|string',
+            'lastname' => 'required|string',
+            'country' => 'required',
+            'state' => 'required',
+            'address' => 'nullable|string',
+            'city' => 'nullable',
+            'bio' => 'nullable'
         ]);
         $user = User::find(Auth::id());
-        if(!$user){
-            abort(400,'User account not found');
+        if (!$user) {
+            abort(400, 'User account not found');
         }
         $user->firstname = $request['firstname'];
         $user->lastname = $request['lastname'];
@@ -30,9 +32,9 @@ class UserController extends Controller
         $user->city = $request['city'];
 
 
-        if($user->teacher){
-            $user->teacher->update(['bio'=>$request['bio']]);
-            if($request->has('image')){
+        if ($user->teacher) {
+            $user->teacher->update(['bio' => $request['bio']]);
+            if ($request->has('image')) {
                 // $img = cloudinary()->uploadFile($request->file('image')->getRealPath())->getSecurePath();
                 $img = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
                 $user->profile_img = $img;
@@ -41,5 +43,11 @@ class UserController extends Controller
         $user->save();
 
         return response()->json($user->load('teacher'), 200);
+    }
+
+    public function activities()
+    {
+        $activity = Activity::where('user_id', Auth::id())->latest()->paginate(20);
+        return $activity;
     }
 }

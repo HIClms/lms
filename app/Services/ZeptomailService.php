@@ -12,7 +12,7 @@ class ZeptomailService
     public static function sendMailZeptoMail($subject, $message, $email)
     {
         $curl = curl_init();
-
+        $s_key = '';
         curl_setopt_array($curl, array(
             CURLOPT_URL => "https://api.zeptomail.com/v1.1/email",
             CURLOPT_RETURNTRANSFER => true,
@@ -30,7 +30,7 @@ class ZeptomailService
             }',
             CURLOPT_HTTPHEADER => array(
                 "accept: application/json",
-                "authorization: Zoho-enczapikey wSsVR61x+ETwXfovymKucr8/mglcUl/yQU16jVCn6ySvGKuR9Mc/kkCYUFLyFPgdFGBuRjUVpLJ8nEtV0TcIj9t7yVEGCyiF9mqRe1U4J3x17qnvhDzOXWRdkROLJY8Kxg5skmVoEc4k+g==",
+                "authorization: Zoho-enczapikey {$s_key}",
                 "cache-control: no-cache",
                 "content-type: application/json",
             ),
@@ -50,6 +50,7 @@ class ZeptomailService
 
     public static function sendTemplateZeptoMail($templateId, $body, $email)
     {
+        $s_key = '';
         $curl = curl_init();
         $info = json_encode($body);
         curl_setopt_array($curl, array(
@@ -69,7 +70,7 @@ class ZeptomailService
             }',
             CURLOPT_HTTPHEADER => array(
                 "accept: application/json",
-                "authorization: Zoho-enczapikey wSsVR61x+ETwXfovymKucr8/mglcUl/yQU16jVCn6ySvGKuR9Mc/kkCYUFLyFPgdFGBuRjUVpLJ8nEtV0TcIj9t7yVEGCyiF9mqRe1U4J3x17qnvhDzOXWRdkROLJY8Kxg5skmVoEc4k+g==",
+                "authorization: Zoho-enczapikey {$s_key}",
                 "cache-control: no-cache",
                 "content-type: application/json",
             ),

@@ -68,6 +68,8 @@ Route::prefix('v1')->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('update-profile', [UserController::class, 'updateProfile']);
         Route::get('activities',  [UserController::class, 'activities']);
+        Route::get('get-admin-chats', [UserController::class, 'getAdminChats']);
+        Route::post('send-message', [UserController::class, 'sendMessage']);
     });
 
     Route::prefix('/admin')->group(function () {
